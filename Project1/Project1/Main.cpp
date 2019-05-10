@@ -2,118 +2,78 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#define STACK_SIZE 100
 
-typedef struct ListNode {
-	char data[4];
-	struct ListNode* link;
-}listNode;
+typedef int element;
 
-typedef struct {
-	listNode* head;
-} linkedList_h;
+element stack[STACK_SIZE];
+int top = -1;
 
-linkedList_h* createLinkedList_h(void) {
-	linkedList_h* CL;
-	CL = (linkedList_h*)malloc(sizeof(linkedList_h));
-	CL->head = NULL;
-	return CL;
+int isEmpty() {
+	if (top == -1)return 1;
+	else return 0;
 }
 
-void printList(linkedList_h* CL) {
-	listNode* p;
-	printf(" CL = (");
-	p = CL->head;
-	do {
-		printf("%s", p->data);
-		p = p->link;
-		if (p != CL->head)printf(",");
-	} while (p != CL->head);
-	printf(") \n");
+int isFull() {
+	if (top == STACK_SIZE - 1)return 1;
+	else return 0;
 }
 
-void insertFirstNode(linkedList_h *CL, const char *x) {
-	listNode* newNode, *temp;
-	newNode = (listNode*)malloc(sizeof(listNode));
-	strcpy(newNode->data, x);
-	if (CL->head == NULL) {
-		CL->head = newNode;
-		newNode->link = newNode;
-	}
-	else {
-		temp = CL->head;
-		while (temp->link != CL->head)
-			temp = temp->link;
-		newNode->link = temp->link;
-		temp->link = newNode;
-		CL->head = newNode;
-	}
-}
-
-void insertMiddleNode(linkedList_h* CL, ListNode *pre, const char*x) {
-	listNode* newNode;
-	newNode = (listNode*)malloc(sizeof(listNode));
-	strcpy(newNode->data, x);
-	if (CL == NULL) {
-		CL->head = newNode;
-	}
-	else {
-		newNode->link = pre->link;
-		pre->link = newNode;
-	}
-}
-
-void deleteNode(linkedList_h* CL, listNode* old) {
-	listNode* pre;
-	if (CL->head == NULL)return;
-	if (CL->head->link == CL->head) {
-		free(CL->head);
-		CL->head = NULL;
+void push(element item) {
+	if (isFull()) {
+		printf("\n\n Stack is FULL! \n");
 		return;
 	}
-	else if (old == NULL)return;
-	else {
-		pre = CL->head;
-		while (pre->link != old) {
-			pre = pre->link;
-		}
-		pre->link = old->link;
-		if (old == CL->head)
-			CL->head = old->link;
-		free(old);
+	else stack[++top] = item;
+}
+
+element pop() {
+	if (isEmpty()) {
+		printf("\n\n Stack is Empty!!\n");
+		return 0;
 	}
+	else return stack[top--];
 }
 
-listNode* searchNode(linkedList_h* CL, const char* x) {
-	listNode *temp;
-	temp = CL->head;
-	if (temp == NULL)return NULL;
-	do {
-		if (strcmp(temp->data, x) == 0)return temp;
-		else temp = temp->link;
-	} while (temp != CL->head);
-	return NULL;
+element peek() {
+	if (isEmpty()) {
+		printf("\n\n Stack is Empty !\n");
+		exit(1);
+	}
+	else return stack[top];
+}
+
+void printStack() {
+	int i;
+	printf("\n STACK [");
+	for (i = 0; i <= top; i++)
+		printf("%d", stack[i]);
+	printf("]");
 }
 
 
-int main(){
-	linkedList_h* CL;
-	listNode *p;
-	CL = createLinkedList_h();
-	printf("(1) 원형 연결 리스트 생성하기! \n");
-	getchar();
+
+
+
+void main(void){
+	element item;
+	printf("\n** 순차 스택 연산**\n");
+	printStack();
+	push(1); printStack();
+	push(2); printStack();
+	push(3); printStack();
 	
-	printf("(2) 원형 연결 리스트에 [월] 노드 삽입하기! \n");
-	insertFirstNode(CL, "월");
-	printList(CL); getchar();
-	printf("(3) 원형 연결 리스트의 [월] 노드 뒤에 [수] 노드 삽입하기! \n");
-	p = searchNode(CL, "월"); insertMiddleNode(CL,p, "수");
-	printList(CL); getchar();
-	printf("(4) 원형 연결 리스트에 [수] 노드 뒤에 [금] 노드 삽입하기! \n");
-	p = searchNode(CL, "수"); insertMiddleNode(CL,p, "금");
-	printList(CL); getchar();
-	printf("(5) 원형 연결 리스트에 [수] 노드 삭제하기! \n");
-	p = searchNode(CL, "수"); deleteNode(CL, p);
-	printList(CL); getchar();
+	item = peek(); printStack();
+	printf("peek => %d", item);
 
-	return 0;
+	item = pop(); printStack();
+	printf("\t pop => %d", item);
+
+	item = pop(); printStack();
+	printf("\t pop => %d", item);
+
+	item = pop(); printStack();
+	printf("\t pop => %d", item);
+
+	getchar();
 }
