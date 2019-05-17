@@ -2,78 +2,87 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define STACK_SIZE 100
+#define Q_SIZE 4
 
-typedef int element;
+typedef char element;
 
-element stack[STACK_SIZE];
-int top = -1;
+typedef struct {
+	element queue[Q_SIZE];
+	int front, rear;
+}QueueType;
 
-int isEmpty() {
-	if (top == -1)return 1;
+QueueType *creatQueue() {
+	QueueType *Q;
+	Q = (QueueType *)malloc(sizeof(QueueType));
+	Q->front = -1;
+	Q->rear = -1;
+	return Q;
+}
+
+int isEmpty(QueueType *Q) {
+	if (Q->front == Q->rear) {
+		printf(" Queue is empty! ");
+		return 1;
+	}
 	else return 0;
 }
 
-int isFull() {
-	if (top == STACK_SIZE - 1)return 1;
+int isFull(QueueType *Q) {
+	if (Q->rear == Q_SIZE - 1) {
+		printf(" Queue is full! ");
+		return 1;
+	}
 	else return 0;
 }
 
-void push(element item) {
-	if (isFull()) {
-		printf("\n\n Stack is FULL! \n");
-		return;
+void enQueue(QueueType *Q, element item) {
+	if (isFull(Q)) return;
+	else {
+		Q->rear++;
+		Q->queue[Q->rear] = item;
 	}
-	else stack[++top] = item;
 }
 
-element pop() {
-	if (isEmpty()) {
-		printf("\n\n Stack is Empty!!\n");
-		return 0;
+element deQueue(QueueType *Q) {
+	if (isEmpty(Q)) return NULL;
+	else {
+		Q->front++;
+		return Q->queue[Q->front];
 	}
-	else return stack[top--];
+
 }
 
-element peek() {
-	if (isEmpty()) {
-		printf("\n\n Stack is Empty !\n");
-		exit(1);
-	}
-	else return stack[top];
+element peek(QueueType *Q) {
+	if (isEmpty(Q))exit(1);
+	else return Q->queue[Q->front + 1];
 }
 
-void printStack() {
+void printQ(QueueType *Q) {
 	int i;
-	printf("\n STACK [");
-	for (i = 0; i <= top; i++)
-		printf("%d", stack[i]);
-	printf("]");
+	printf(" Queue : [");
+	for (i = Q->front + 1; i <= Q->rear; i++)
+		printf("%3c", Q->queue[i]);
+	printf(" ]");
 }
 
 
 
+void main(void) {
+	QueueType *Q1 = creatQueue();
+	element data;
+	printf("\n **** 순차 큐 연산 *****\n");
+	printf("\n 삽입 A>>"); enQueue(Q1, 'A'); printQ(Q1);
+	printf("\n 삽입 B>>"); enQueue(Q1, 'B'); printQ(Q1);
+	printf("\n 삽입 C>>"); enQueue(Q1, 'C'); printQ(Q1);
+	data = peek(Q1); printf("peek item : %c \n", data);
+	printf("\n 삭제 >>"); data = deQueue(Q1); printQ(Q1);
+	printf("\t 삭제 데이터 :%c",data);
+	printf("\n 삭제 >>"); data = deQueue(Q1); printQ(Q1);
+	printf("\t 삭제 데이터 :%c", data);
+	printf("\n 삭제 >>"); data = deQueue(Q1); printQ(Q1);
+	printf("\t\t 삭제 데이터 :%c", data);
 
-
-void main(void){
-	element item;
-	printf("\n** 순차 스택 연산**\n");
-	printStack();
-	push(1); printStack();
-	push(2); printStack();
-	push(3); printStack();
-	
-	item = peek(); printStack();
-	printf("peek => %d", item);
-
-	item = pop(); printStack();
-	printf("\t pop => %d", item);
-
-	item = pop(); printStack();
-	printf("\t pop => %d", item);
-
-	item = pop(); printStack();
-	printf("\t pop => %d", item);
-
+	printf("\n 삽입 D>>"); enQueue(Q1, 'D'); printQ(Q1);
+	printf("\n 삽입 E>>"); enQueue(Q1, 'E'); printQ(Q1);
 	getchar();
 }
